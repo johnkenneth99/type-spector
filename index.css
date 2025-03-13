@@ -1,0 +1,118 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'Monaco';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Monaco'), url('./fonts/Monaco.woff') format('woff');
+}
+
+pre {
+    white-space: pre-wrap;
+}
+
+ /* --emitDeclarationOnly */
+body {
+  background-color: #1f1f1f;
+  color: white;
+  font-family: "Monaco", sans-serif;
+}
+
+.container {
+  width: 1270px;
+  margin-inline: auto;
+}
+
+/* .container {
+  background-color: rgba(82, 82, 82, 1);
+  color: black;
+} */
+
+.type-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: black;
+  /* width: 500px; */
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.type-definition {
+  color: #4ec9b0;
+  font-size: 1rem;
+}
+
+.type-name {
+  color: #4ec9b0;
+}
+
+.type-header {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  /* padding: .5rem; */
+}
+
+.yellow {
+  color: #ffc914;
+}
+
+.yellow:hover {
+  background-color: rgba(255, 255, 255, 0.5)
+}
+
+.text-lt-gt,
+.text-enum-declaration,
+.text-class-declaration,
+.text-interface-declaration,
+.text-const-declaration,
+.text-declare-declaration,
+.text-type-declaration {
+  color: #569cd6;
+}
+
+.text-purple,
+.text-export-declaration,
+.text-import-declaration,
+.text-default-declaration {
+  color: #9579c0;
+}
+
+.text-moderate-blue {
+  color: #569cd6;
+}
+
+.text-white {
+  color: #FFF;
+}
+
+.text-yellow {
+  color: #ffc914;
+}
+
+.text-blue {
+  color: #1b99ff;
+}
+
+.string {
+ color: #ce9178
+}
+
+.reserved-keyword {
+  color: #569cd6;
+}
+
+.type-kind {
+  color: #4ec9b0;
+}
+
+.text-soft-blue{
+  color: #8cdcfe
+}
+
+.js-doc {
+color: #5e9949
+}

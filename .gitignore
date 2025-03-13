@@ -1,0 +1,8 @@
+# Directories
+declaration
+node_modules
+out
+
+
+# Files
+test.ts

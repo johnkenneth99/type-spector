@@ -1,0 +1,141 @@
+.container {
+    max-width: 1280px;
+    height: 100vh;
+    margin-inline: auto;
+}
+
+.page-header {
+    text-align: center;
+    font-size: 5rem;
+    padding: 15px;
+}
+
+.page-header-type {
+    background: linear-gradient(#1b99ff, #9198e5);
+    background-clip: text;
+    color: transparent;
+
+}
+
+input[name="search-bar"] {
+    width: 50%;
+    padding: 15px;
+    font-size: 1rem;
+    border-radius: 10px;
+    margin-inline: auto;
+}
+
+.search-bar-container {
+    display: flex;
+}
+
+.card-list {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    row-gap: 15px;
+    margin-block: 15px;
+}
+
+.type-card {
+    /* background-color: black; */
+    width: 100%;
+    border-radius: 5px;
+}
+
+.type-card-header {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgb(0, 0, 0);
+    transition: background-color 0.5s;
+}
+
+.type-card-header:hover {
+    background-color: rgba(123, 123, 123, 0.5);
+    cursor: pointer;
+}
+
+.type-card-content {
+    max-height: 0;
+    transition: max-height 0.25s;
+    overflow: hidden;
+    background-color: rgb(0, 0, 0);
+}
+
+.type-declaration {
+    color: #569cd6;
+}
+
+.type-name {
+    color: #4ec9b0;
+}
+
+
+/** Type definition */
+
+pre {
+    white-space: pre-wrap;
+}
+
+
+/* pre.type-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: black;
+  border-radius: 5px;
+  padding: 10px;
+} */
+
+pre.type-definition {
+  color: #4ec9b0;
+  font-size: 1rem;
+}
+
+.text-lt-gt,
+.text-enum-declaration,
+.text-class-declaration,
+.text-interface-declaration,
+.text-const-declaration,
+.text-declare-declaration,
+.text-type-declaration {
+  color: #569cd6;
+}
+
+.text-purple,
+.text-export-declaration,
+.text-import-declaration,
+.text-default-declaration {
+  color: #9579c0;
+}
+
+.text-moderate-blue {
+  color: #569cd6;
+}
+
+.text-white {
+  color: #FFF;
+}
+
+.text-yellow {
+  color: #ffc914;
+}
+
+.text-blue {
+  color: #1b99ff;
+}
+
+.text-desaturated-orange {
+ color: #ce9178
+}
+
+.text-moderate-cyan {
+  color: #4ec9b0;
+}
+
+.text-soft-blue{
+  color: #8cdcfe
+}
+
+.text-green {
+color: #5e9949
+}

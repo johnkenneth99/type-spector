@@ -1,0 +1,23 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  all: unset;
+}
+
+@font-face {
+  font-family: 'Monaco';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Monaco'), url('../fonts/Monaco.woff') format('woff');
+}
+
+body {
+  background-color: #1f1f1f;
+  color: white;
+  font-family: "Monaco", sans-serif;
+}

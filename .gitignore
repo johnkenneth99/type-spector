@@ -7,3 +7,4 @@ type-spector-emit
 
 # Files
 test.*
+data.*

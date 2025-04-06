@@ -1,0 +1,66 @@
+pre {
+    white-space: pre-wrap;
+}
+
+
+/* pre.type-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: black;
+  border-radius: 5px;
+  padding: 10px;
+} */
+
+pre.type-definition {
+  color: #4ec9b0;
+  font-size: 1rem;
+}
+
+.text-lt-gt,
+.text-enum-declaration,
+.text-class-declaration,
+.text-interface-declaration,
+.text-const-declaration,
+.text-declare-declaration,
+.text-type-declaration {
+  color: #569cd6;
+}
+
+.text-purple,
+.text-export-declaration,
+.text-import-declaration,
+.text-default-declaration {
+  color: #9579c0;
+}
+
+.text-moderate-blue {
+  color: #569cd6;
+}
+
+.text-white {
+  color: #FFF;
+}
+
+.text-yellow {
+  color: #ffc914;
+}
+
+.text-blue {
+  color: #1b99ff;
+}
+
+.text-desaturated-orange {
+ color: #ce9178
+}
+
+.text-moderate-cyan {
+  color: #4ec9b0;
+}
+
+.text-soft-blue{
+  color: #8cdcfe
+}
+
+.text-green {
+color: #5e9949
+}

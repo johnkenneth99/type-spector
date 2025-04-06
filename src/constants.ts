@@ -15,6 +15,7 @@ export const SYMBOL = {
   AMPERSAND: "&",
   EQUAL: "=",
   COMMA: ",",
+  QUESTION_MARK: "?",
   LESS_THAN: "<",
   GREATER_THAN: ">",
   CURLY_BRACE_OPENING: "{",
@@ -23,4 +24,10 @@ export const SYMBOL = {
   SQUARE_BRACKET_CLOSING: "]",
   PARENTHESIS_OPENING: "(",
   PARENTHESIS_CLOSING: ")",
+} as const;
+
+export const MIME_TYPES = {
+  svg: "image/svg+xml",
+  css: "text/css",
+  js: "text/javascript",
 } as const;

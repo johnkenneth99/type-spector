@@ -2,7 +2,8 @@
 declaration
 node_modules
 out
-
+dist
+type-spector-emit
 
 # Files
-test.ts
+test.*

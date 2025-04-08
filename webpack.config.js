@@ -1,13 +1,14 @@
-const path = require("path");
+import path from "path";
 
-module.exports = {
-  entry: [
-    "./out/services/decorate.js",
-    "./out/services/generate-card-list.js",
-    "./out/services/create-nav-bar.js",
-  ],
+/** TODO - Add env file for modes. */
+/**
+ * @type {import("webpack").Configuration}
+ */
+const config = {
+  entry: ["./out/services/decorate.js", "./out/services/create-nav-bar.js"],
+  mode: "development",
   output: {
-    path: path.resolve(__dirname, "out/dist"),
+    path: path.resolve("out/dist"),
     filename: "bundle.js",
   },
   module: {
@@ -23,3 +24,5 @@ module.exports = {
     ],
   },
 };
+
+export default config;

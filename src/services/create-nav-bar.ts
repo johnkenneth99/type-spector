@@ -1,10 +1,7 @@
 import { MatchedTypeDetail } from "../types/create-json.js";
-import { createElement, NewElement } from "./create-element.js";
-
-type DirectoryNode = {
-  name: string;
-  children: DirectoryNode[];
-};
+import { createElement } from "./create-element.js";
+import { decorateTypeDefinition } from "./decorate.js";
+import { buildDirectoryFilter, getFilters } from "./filter.js";
 
 const toggleSVG = `
           <svg class="hidden ml-auto w-7 h-7 stroke-white group-hover:stroke-cyan-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,6 +39,16 @@ const filterButton = document.getElementsByClassName(
   "filter-button"
 )[0] as HTMLElementTagNameMap["button"];
 
+type State = {
+  filename: Record<string, boolean>;
+  directory: Record<string, string>;
+};
+
+const state: State = {
+  filename: {},
+  directory: {},
+};
+
 filterButton.addEventListener("click", () => {
   const tokens = filterButton.classList;
 
@@ -57,53 +64,10 @@ filterButton.addEventListener("click", () => {
   filterList.classList.toggle("hidden");
 });
 
-type Filter =
-  | {
-      name: "Filename";
-      data: string[];
-    }
-  | {
-      name: "Directory";
-      data: DirectoryNode[];
-    };
-
-const DEFAULT_FILTERS = [
-  {
-    filterName: "Declaration",
-    options: ["type alias", "interface", "enum"],
-  },
-  // {
-  //   filterName: "Directory",
-  //   options: ["pages", "components", "shared", "base", "test"],
-  // },
-] as const;
-
-/** Builds the directory filter. */
-const buildTree = (tree: DirectoryNode[], paths: string[]) => {
-  for (const path of paths) {
-    const node = tree.find((item) => item.name === path);
-
-    if (!node) {
-      const temp: DirectoryNode = { name: path, children: [] };
-      tree.push(temp);
-
-      tree = temp.children;
-    } else {
-      tree = node.children;
-    }
-  }
-};
-
-/** Returns an array of filters to be rendered. */
-const getFilters = () => {};
-
 const toggleFilter = (list: HTMLUListElement): void => {
   if (list.style.maxHeight) {
     list.style.maxHeight = "";
-    // list.style.padding = "";
   } else {
-    // list.style.padding = "20px";
-    // + 80
     list.style.maxHeight = list.scrollHeight + "px";
   }
 };
@@ -115,74 +79,7 @@ const toggleFilter = (list: HTMLUListElement): void => {
 
   const types = (await response.json()) as MatchedTypeDetail[];
 
-  const fileNames: Set<string> = new Set();
-  const directories: Set<string> = new Set();
-
-  // const tree: Test = { name: "root", children: [] };
-  const tree: DirectoryNode[] = [];
-
-  for (const type of types) {
-    const { fileName, filePath } = type;
-
-    if (!fileNames.has(fileName)) {
-      fileNames.add(fileName);
-    }
-
-    /** How to know if nested? */
-    if (!filePath.length) continue;
-
-    buildTree(tree, filePath);
-
-    // fileNameFilter.options.push(fileName);
-    // directoryFilter.options.push(filePath)
-  }
-
-  const buildDirectyFilter = (
-    tree: DirectoryNode[],
-    depth: number
-  ): HTMLUListElement => {
-    const list = document.createElement("ul");
-
-    list.style.marginLeft = `${12 * depth}px`;
-
-    for (const node of tree) {
-      const { name, children } = node;
-
-      const item = document.createElement("li");
-      const text = document.createElement("p");
-
-      const container = document.createElement("div");
-      container.className = "flex gap-x-3 items-center";
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-
-      text.append(name);
-      container.append(checkbox, text);
-      item.append(container);
-      list.append(item);
-
-      if (children.length) {
-        item.append(buildDirectyFilter(children, depth + 1));
-      }
-    }
-
-    return list;
-  };
-
-  // console.log(buildDirectyFilter(tree));
-
-  const fileNameFilter: Filter = {
-    name: "Filename",
-    data: Array.from(fileNames),
-  };
-
-  const directoryFilter: Filter = {
-    name: "Directory",
-    data: tree,
-  };
-
-  const filters: Filter[] = [fileNameFilter, directoryFilter];
+  const filters = getFilters(types);
 
   for (const filter of filters) {
     const { name, data } = filter;
@@ -208,6 +105,16 @@ const toggleFilter = (list: HTMLUListElement): void => {
             checkbox.type = "checkbox";
             item.className = "flex gap-x-3";
 
+            checkbox.addEventListener("change", (event) => {
+              event.stopPropagation();
+
+              if (checkbox.checked) {
+                state.filename[option] = checkbox.checked;
+              } else {
+                delete state.filename[option];
+              }
+            });
+
             item.append(checkbox, option);
             list.append(item);
           }
@@ -220,7 +127,7 @@ const toggleFilter = (list: HTMLUListElement): void => {
 
       case "Directory":
         {
-          const list = buildDirectyFilter(data, 0);
+          const list = buildDirectoryFilter(data, 0);
           list.className = "filter-group-list";
 
           button.addEventListener("click", () => toggleFilter(list));
@@ -232,3 +139,120 @@ const toggleFilter = (list: HTMLUListElement): void => {
     filterList.append(container);
   }
 })();
+
+const searchInputElement = document.getElementById(
+  "search-bar-input"
+) as HTMLElementTagNameMap["input"];
+
+searchInputElement.addEventListener("change", async () => {
+  const test = await fetch("http://localhost:8000/data.json");
+
+  if (test.ok) {
+    const types = (await test.json()) as MatchedTypeDetail[];
+
+    const { filename, directory } = state;
+
+    const filteredTypes = types.filter((item) => {
+      const { typeName, fileName } = item;
+      const hasFilenameSet = !!Object.keys(filename).length;
+
+      const isTypeNameMatch =
+        typeName
+          .toLowerCase()
+          .indexOf(searchInputElement.value.toLowerCase()) !== -1;
+
+      const isFileNameMatch = hasFilenameSet
+        ? Object.keys(state.filename).includes(fileName)
+        : true;
+
+      return isTypeNameMatch && isFileNameMatch;
+    });
+
+    const cardList = document.getElementsByClassName("card-list")[0];
+
+    if (!filteredTypes.length) {
+      cardList.innerHTML = "Type not found.";
+    } else {
+      cardList.innerHTML = "";
+
+      for (const type of filteredTypes) {
+        const card = document.createElement("div");
+        const cardContent = document.createElement("div");
+        const cardHeader = document.createElement("div");
+
+        card.className = "type-card";
+        cardContent.className = "type-card-content";
+        cardHeader.className = "type-card-header";
+
+        cardHeader.addEventListener("click", () => {
+          cardHeader.classList.toggle("type-card-header--active");
+
+          if (cardContent.style.maxHeight) {
+            cardContent.style.maxHeight = "";
+            cardContent.style.padding = "";
+          } else {
+            cardContent.style.padding = "20px";
+            cardContent.style.maxHeight = cardContent.scrollHeight + 80 + "px";
+          }
+        });
+
+        const { substring, typeName, filePath, fileName } = type;
+
+        const typeDeclaration = JSON.parse(
+          type.declarationKind
+        ) as MatchedTypeDetail["declarationKind"];
+
+        const typeDefinition: string = JSON.parse(type.typeDefinition ?? "");
+
+        const fullTypeDefinition = decorateTypeDefinition(
+          substring + typeDefinition
+        );
+
+        const preElement = createElement({
+          value: fullTypeDefinition,
+          tag: "pre",
+          type: "element",
+          className: "type-definition",
+        });
+
+        /** Ex. PATH: "/src/services" */
+        const filePathElement = document.createElement("p");
+        filePathElement.className = "text-[0.9rem] mt-10";
+
+        /** Label element */
+        const pathSpan = document.createElement("span");
+        pathSpan.innerHTML = "Path";
+        pathSpan.className = "text-celestial-blue uppercase";
+
+        /** File path of the type. */
+        const filePathSpan = document.createElement("span");
+        filePathSpan.append(`"/${filePath.join("/")}"`);
+        filePathSpan.className = "text-copper";
+
+        filePathElement.append(pathSpan, ": ", filePathSpan);
+
+        /** Ex. FILENAME: "constants.ts" */
+        const fileNameElement = document.createElement("p");
+        fileNameElement.className = "text-[0.9rem] mt-1";
+
+        /** Label element */
+        const filenameSpan = document.createElement("span");
+        filenameSpan.innerHTML = "Filename";
+        filenameSpan.className = "text-celestial-blue uppercase";
+
+        /** Filename of the type. */
+        const fileNameSpan = document.createElement("span");
+        fileNameSpan.append(`"${fileName}"`);
+        fileNameSpan.className = "text-copper";
+
+        fileNameElement.append(filenameSpan, ": ", fileNameSpan);
+
+        cardHeader.innerHTML = `<h3><span class="type-declaration">${typeDeclaration}</span> <span class="type-name">${typeName}</span></h3>`;
+        cardContent.append(preElement, filePathElement, fileNameElement);
+
+        card.append(cardHeader, cardContent);
+        cardList.append(card);
+      }
+    }
+  }
+});

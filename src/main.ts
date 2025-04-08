@@ -1,28 +1,9 @@
-import { readFile, readFileSync, writeFile } from "fs";
-import {
-  createServer,
-  OutgoingHttpHeaders,
-  type IncomingMessage,
-  type ServerResponse,
-} from "http";
-import { COLORS, HTML_ENTITY_MAP, MIME_TYPES, SYMBOL } from "./constants.js";
-import { ContentType, DeclarationKind, Encoding, StatusCode } from "./enums.js";
-import {
-  keywordRegex,
-  requiredPropertyRegex,
-  regexDictionary,
-  optionalPropertyRegex,
-  commentRegex,
-} from "./regex.js";
-import {
-  isBackTick,
-  isDeclarationKind,
-  isKeyOf,
-  isQuote,
-  isSymbol,
-} from "./utils.js";
-import { readdir } from "fs/promises";
+import { readFileSync } from "fs";
+import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { ListenOptions } from "net";
+import { MIME_TYPES } from "./constants.js";
+import { ContentType, Encoding, StatusCode } from "./enums.js";
+import { isKeyOf } from "./utils.js";
 
 /** TODO: Create unit tests for keywords and types being decoarted as object keys. Ex. { keyof: string, string: "Hi" }*/
 /** TODO: Create unit tests for symbols,types and keywords not being decorated inside a string literal type. Ex. type MyType = " A <span> tag; number string keyof " */
@@ -30,9 +11,6 @@ import { ListenOptions } from "net";
 /** TODO: Execute prettier command after declaration files has been emitted.*/
 /** TODO: Read all files in declaration directory.*/
 /** TODO: Decorate enum definition seperately.*/
-
-/** Represents the start and end index of the range respectively. */
-type Range = [number, number];
 
 /** All types are valid since we're using the tsc to emit the declaration files. */
 const handleRequest = async (
@@ -65,7 +43,6 @@ const handleRequest = async (
       }
 
       case /^\/assets\//.test(request.url): {
-        console.log(request.url);
         const match = request.url.match(/(.*\/)(.+\.(.+))/i);
 
         if (!match) return;
@@ -196,5 +173,5 @@ const LISTEN_OPTIONS = {
 } as const satisfies ListenOptions;
 
 server.listen(LISTEN_OPTIONS, () => {
-  console.info("Listening");
+  console.info("Listening, http://localhost:8000");
 });

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Safelist
-    ml-5
-    ml-6
-*/
+@theme {
+  --color-copper: #ce9178;
+  --color-celestial-blue: #569cd6;
+}

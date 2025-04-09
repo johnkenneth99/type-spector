@@ -68,11 +68,14 @@ filterButton.addEventListener("click", () => {
 });
 
 const toggleFilter = (list: HTMLUListElement): void => {
-  if (list.style.maxHeight) {
-    list.style.maxHeight = "";
-  } else {
-    list.style.maxHeight = list.scrollHeight + "px";
-  }
+  list.classList.toggle("hidden");
+
+  /** Comment out for now. */
+  // if (list.style.maxHeight) {
+  //   list.style.maxHeight = "";
+  // } else {
+  //   list.style.maxHeight = list.scrollHeight + "px";
+  // }
 };
 
 (async () => {
@@ -134,7 +137,7 @@ const toggleFilter = (list: HTMLUListElement): void => {
       case "Directory":
         {
           const list = buildDirectoryFilter(data, 0);
-          list.className = "filter-group-list";
+          list.className = "hidden";
 
           button.addEventListener("click", () => toggleFilter(list));
           container.append(list);

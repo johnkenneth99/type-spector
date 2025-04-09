@@ -10,7 +10,7 @@
     "webpack:watch": "webpack --watch",
     "node:watch": "cd ./out && node --watch main.js",
     "emit": "tsc --build tsconfig.emit.json",
-    "dev": "run-p --print-label \"tsc:watch\" \"webpack:watch\" \"node:watch\" -- --watch",
+    "dev": "run-p --print-label \"tsc:watch\" \"webpack:watch\" \"node:watch\" \"build:css\" -- --watch",
     "generate:data": "tsx ./src/services/create-json.ts",
     "build:css": "npx @tailwindcss/cli -i ./src/styles/input.css -o ./out/dist/output.css --watch"
   },

@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "tsc": "tsc",
-    "emit": "tsc --build tsconfig.emit.json",
-    "tsc:declaration": "tsc --declaration --declarationDir",
-    "dev": "run-p --print-label \"dev:out\" \"build:css\" -- --watch",
-    "dev:out": "cd ./out && node ./main",
+    "tsc:watch": "tsc --watch",
     "webpack": "webpack",
+    "webpack:watch": "webpack --watch",
+    "node:watch": "cd ./out && node --watch main.js",
+    "emit": "tsc --build tsconfig.emit.json",
+    "dev": "run-p --print-label \"tsc:watch\" \"webpack:watch\" \"node:watch\" -- --watch",
     "generate:data": "tsx ./src/services/create-json.ts",
-    "build:dev": "tsc && webpack",
     "build:css": "npx @tailwindcss/cli -i ./src/styles/input.css -o ./out/dist/output.css --watch"
   },
   "keywords": [

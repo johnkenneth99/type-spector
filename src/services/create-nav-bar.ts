@@ -1,3 +1,4 @@
+import { DeclarationKind } from "../enums.js";
 import { MatchedTypeDetail } from "../types/create-json.js";
 import { createElement } from "./create-element.js";
 import { decorateTypeDefinition } from "./decorate.js";
@@ -42,11 +43,13 @@ const filterButton = document.getElementsByClassName(
 type State = {
   filename: Record<string, boolean>;
   directory: Record<string, string>;
+  declaration: Record<string, string>;
 };
 
 const state: State = {
   filename: {},
   directory: {},
+  declaration: {},
 };
 
 filterButton.addEventListener("click", () => {
@@ -94,6 +97,7 @@ const toggleFilter = (list: HTMLUListElement): void => {
 
     switch (name) {
       case "Filename":
+      case "Declaration":
         {
           const list = document.createElement("ul");
           list.className = "filter-group-list";
@@ -107,12 +111,14 @@ const toggleFilter = (list: HTMLUListElement): void => {
 
             checkbox.addEventListener("change", (event) => {
               event.stopPropagation();
+              const key = name.toLowerCase() as keyof State;
 
               if (checkbox.checked) {
-                state.filename[option] = checkbox.checked;
+                state[key][option] = checkbox.checked;
               } else {
-                delete state.filename[option];
+                delete state[key][option];
               }
+              console.log(state);
             });
 
             item.append(checkbox, option);
@@ -150,11 +156,16 @@ searchInputElement.addEventListener("change", async () => {
   if (test.ok) {
     const types = (await test.json()) as MatchedTypeDetail[];
 
-    const { filename, directory } = state;
+    const { filename, declaration } = state;
 
     const filteredTypes = types.filter((item) => {
-      const { typeName, fileName } = item;
-      const hasFilenameSet = !!Object.keys(filename).length;
+      const { typeName, fileName, declarationKind } = item;
+
+      const filenames = Object.keys(filename);
+      const declarations = Object.keys(declaration);
+
+      const hasFilenameSet = !!filenames.length;
+      const hasDeclarationSet = !!declarations.length;
 
       const isTypeNameMatch =
         typeName
@@ -162,10 +173,14 @@ searchInputElement.addEventListener("change", async () => {
           .indexOf(searchInputElement.value.toLowerCase()) !== -1;
 
       const isFileNameMatch = hasFilenameSet
-        ? Object.keys(state.filename).includes(fileName)
+        ? filenames.includes(fileName)
         : true;
 
-      return isTypeNameMatch && isFileNameMatch;
+      const isDeclarationMatch = hasDeclarationSet
+        ? declarations.includes(declarationKind)
+        : true;
+
+      return isTypeNameMatch && isFileNameMatch && isDeclarationMatch;
     });
 
     const cardList = document.getElementsByClassName("card-list")[0];
@@ -196,11 +211,10 @@ searchInputElement.addEventListener("change", async () => {
           }
         });
 
-        const { substring, typeName, filePath, fileName } = type;
+        const { substring, typeName, filePath, fileName, declarationKind } =
+          type;
 
-        const typeDeclaration = JSON.parse(
-          type.declarationKind
-        ) as MatchedTypeDetail["declarationKind"];
+        cardHeader.innerHTML = `<h3><span class="type-declaration">${declarationKind}</span> <span class="type-name">${typeName}</span></h3>`;
 
         const typeDefinition: string = JSON.parse(type.typeDefinition ?? "");
 
@@ -247,7 +261,6 @@ searchInputElement.addEventListener("change", async () => {
 
         fileNameElement.append(filenameSpan, ": ", fileNameSpan);
 
-        cardHeader.innerHTML = `<h3><span class="type-declaration">${typeDeclaration}</span> <span class="type-name">${typeName}</span></h3>`;
         cardContent.append(preElement, filePathElement, fileNameElement);
 
         card.append(cardHeader, cardContent);

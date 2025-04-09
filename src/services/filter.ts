@@ -1,3 +1,4 @@
+import { DeclarationKind } from "../enums.js";
 import { type MatchedTypeDetail } from "../types/create-json.js";
 
 export type DirectoryNode = {
@@ -67,7 +68,11 @@ export const getFilters = (types: MatchedTypeDetail[]): Filter[] => {
 
   const declarationFilter: Filter = {
     name: "Declaration",
-    data: ["type alias", "interface", "enum"],
+    data: [
+      DeclarationKind.TYPE_ALIAS,
+      DeclarationKind.INTERFACE,
+      DeclarationKind.ENUM,
+    ],
   };
 
   return [declarationFilter, fileNameFilter, directoryFilter];
@@ -79,7 +84,7 @@ export const buildDirectoryFilter = (
 ): HTMLUListElement => {
   const list = document.createElement("ul");
 
-  list.style.marginLeft = `${1 * depth}px`;
+  list.style.marginLeft = `${5 * depth}px`;
 
   for (const node of tree) {
     const { name, children } = node;

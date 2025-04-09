@@ -12,8 +12,6 @@ const createJSON = async (): Promise<void> => {
     recursive: true,
   });
 
-  let currentDirectory = "root";
-
   /** Will contain all the types found in the project. */
   const result: MatchedTypeDetail[] = [];
 
@@ -42,11 +40,9 @@ const createJSON = async (): Promise<void> => {
   /** NOTE: Handle error if a promise fails. */
   await Promise.all(readFilePromises);
 
-  const jsonData = result.map((item) => ({
-    ...item,
-    typeDefinition: JSON.stringify(item.typeDefinition),
-    declarationKind: JSON.stringify(item.declarationKind),
-    // tail: JSON.stringify(item.tail),
+  const jsonData = result.map(({ typeDefinition, ...rest }) => ({
+    ...rest,
+    typeDefinition: JSON.stringify(typeDefinition),
   }));
 
   writeFile("data.json", JSON.stringify(jsonData, null, 2), (err) =>

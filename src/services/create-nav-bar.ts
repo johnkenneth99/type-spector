@@ -1,4 +1,4 @@
-import { DeclarationKind } from "../enums.js";
+import checkboxElement from "../components/checkbox.js";
 import { MatchedTypeDetail } from "../types/create-json.js";
 import { createElement } from "./create-element.js";
 import { decorateTypeDefinition } from "./decorate.js";
@@ -69,13 +69,6 @@ filterButton.addEventListener("click", () => {
 
 const toggleFilter = (list: HTMLUListElement): void => {
   list.classList.toggle("hidden");
-
-  /** Comment out for now. */
-  // if (list.style.maxHeight) {
-  //   list.style.maxHeight = "";
-  // } else {
-  //   list.style.maxHeight = list.scrollHeight + "px";
-  // }
 };
 
 (async () => {
@@ -103,28 +96,32 @@ const toggleFilter = (list: HTMLUListElement): void => {
       case "Declaration":
         {
           const list = document.createElement("ul");
-          list.className = "filter-group-list";
 
           for (const option of data) {
             const item = document.createElement("li");
-            const checkbox = document.createElement("input");
+            item.className = "flex items-center gap-x-2 p-1";
 
-            checkbox.type = "checkbox";
-            item.className = "flex gap-x-3";
+            const label = document.createElement("label");
+            label.className =
+              "peer-has-checked:text-celestial-blue cursor-pointer";
+            label.htmlFor = option;
+            label.append(option);
 
-            checkbox.addEventListener("change", (event) => {
-              event.stopPropagation();
-              const key = name.toLowerCase() as keyof State;
+            const checkbox = checkboxElement({
+              id: option,
+              onChange: (element, event) => {
+                event.stopPropagation();
+                const key = name.toLowerCase() as keyof State;
 
-              if (checkbox.checked) {
-                state[key][option] = checkbox.checked;
-              } else {
-                delete state[key][option];
-              }
-              console.log(state);
+                if (element.checked) {
+                  state[key][option] = element.checked;
+                } else {
+                  delete state[key][option];
+                }
+              },
             });
 
-            item.append(checkbox, option);
+            item.append(checkbox, label);
             list.append(item);
           }
 
@@ -137,7 +134,6 @@ const toggleFilter = (list: HTMLUListElement): void => {
       case "Directory":
         {
           const list = buildDirectoryFilter(data, 0);
-          list.className = "hidden";
 
           button.addEventListener("click", () => toggleFilter(list));
           container.append(list);

@@ -1,3 +1,4 @@
+import checkboxElement from "../components/checkbox.js";
 import { DeclarationKind } from "../enums.js";
 import { type MatchedTypeDetail } from "../types/create-json.js";
 
@@ -78,6 +79,12 @@ export const getFilters = (types: MatchedTypeDetail[]): Filter[] => {
   return [declarationFilter, fileNameFilter, directoryFilter];
 };
 
+/**
+ *
+ * @param tree Represents the shape of the directory
+ * @param depth A number to modify the indentation of child directories
+ * @returns A `ul`element representing the directory of the types
+ */
 export const buildDirectoryFilter = (
   tree: DirectoryNode[],
   depth: number
@@ -93,7 +100,7 @@ export const buildDirectoryFilter = (
     const label = document.createElement("label");
 
     const container = document.createElement("div");
-    container.className = "flex gap-x-1 items-center peer group";
+    container.className = "flex gap-x-2 items-center peer group p-1";
 
     const checkbox = checkboxElement({ id: name });
     label.className = "peer-has-checked:text-celestial-blue cursor-pointer";
@@ -111,44 +118,3 @@ export const buildDirectoryFilter = (
 
   return list;
 };
-
-type CheckBoxElementProps = {
-  id?: string;
-};
-
-const checkboxElement = ({ id }: CheckBoxElementProps): HTMLDivElement => {
-  const container = document.createElement("div");
-  container.className = "flex group peer";
-
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.className =
-    "peer appearance-none h-4 w-4 border checked:border-celestial-blue border-white cursor-pointer z-1";
-
-  if (id) {
-    checkbox.id = id;
-  }
-
-  container.append(checkbox);
-  container.innerHTML += tickSVG;
-
-  return container;
-};
-
-const tickSVG = `<svg viewBox="0 -0.5 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute stroke-white peer-checked:stroke-celestial-blue">
-      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></g>
-      <g id="SVGRepo_iconCarrier">
-        <path
-          d="M5.5 12.5L10.167 17L19.5 8"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></path>
-      </g>
-    </svg>
-`;

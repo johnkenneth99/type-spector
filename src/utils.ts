@@ -45,3 +45,20 @@ export const decorateTypeDefinitionPrefix = ({
 
   return [...declarationKindParts, decoratedTypeName + tail].join(" ");
 };
+
+export const htmlToElement = <
+  T extends HTMLElementTagNameMap[keyof HTMLElementTagNameMap] = HTMLElement
+>(
+  html: string
+): T => {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  const hasChildren = !!template.content.childNodes.length;
+  const node = template.content.firstChild;
+
+  if (!hasChildren || !node) {
+    throw new Error("Invalid html element.");
+  }
+
+  return node as T;
+};
